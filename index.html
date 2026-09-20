@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Liều nhi</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Liều nhi">
+<meta name="theme-color" content="#0F6B4F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#EAF1EC; --paper:#FFFFFF; --ink:#11342A; --muted:#587066; --line:#CCDAD1;
+  --accent:#0F6B4F; --accent-ink:#FFFFFF; --mark:#F2B134; --markbg:#FFF4D9;
+  --warn:#A8261C; --warnbg:#FBE8E5; --hi:#E0EFE6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1814; --paper:#15231E; --ink:#E4EFE9; --muted:#9BB1A7; --line:#2A3E36;
+    --accent:#5CC8A1; --accent-ink:#06261C; --mark:#F2B134; --markbg:#3A2E12;
+    --warn:#FF9C8F; --warnbg:#3B1D19; --hi:#1D3129;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1814; --paper:#15231E; --ink:#E4EFE9; --muted:#9BB1A7; --line:#2A3E36;
+  --accent:#5CC8A1; --accent-ink:#06261C; --mark:#F2B134; --markbg:#3A2E12;
+  --warn:#FF9C8F; --warnbg:#3B1D19; --hi:#1D3129;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);
+  padding:12px 16px 10px;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.brand{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.status{font-size:12px;color:var(--muted)}
+.iconbtn{border:1px solid var(--line);background:var(--paper);border-radius:10px;height:36px;min-width:36px;padding:0 10px;font-weight:600;font-size:14px}
+
+.patient{display:grid;grid-template-columns:1.1fr 1fr;gap:10px}
+.field{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:8px 12px 6px}
+.field:focus-within{border-color:var(--accent)}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.kg{display:flex;align-items:baseline;gap:6px}
+.kg input{width:100%;border:0;background:transparent;font-size:34px;font-weight:800;padding:0;outline:none;letter-spacing:-.02em;min-width:0}
+.kg span{font-weight:600;color:var(--muted)}
+.age{display:flex;align-items:baseline;gap:4px}
+.age input{width:2.4em;border:0;background:transparent;font-size:26px;font-weight:700;padding:0;outline:none;text-align:right;min-width:0}
+.age span{font-size:13px;color:var(--muted);margin-right:4px}
+.search{margin-top:10px;width:100%;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 12px;font-size:16px;outline:none}
+.search:focus{border-color:var(--accent)}
+
+main{padding:14px 16px 110px;max-width:720px;margin:0 auto}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;margin-bottom:12px}
+.card-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.name{font-weight:700;font-size:18px;line-height:1.25}
+.prep{font-size:13px;color:var(--muted);margin-top:2px}
+.edit{border:0;background:transparent;color:var(--accent);font-weight:600;font-size:14px;padding:4px 2px}
+.dose{margin-top:10px;background:var(--markbg);border-left:5px solid var(--mark);border-radius:4px 12px 12px 4px;padding:10px 12px}
+.dose-big{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.dose-big small{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0}
+.dose-sub{font-size:14px;margin-top:4px}
+.rule{font-size:14px;color:var(--muted);margin-top:8px}
+.warn{margin-top:8px;background:var(--warnbg);color:var(--warn);border-radius:10px;padding:7px 10px;font-size:14px;font-weight:600}
+.cap{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;color:var(--warn)}
+.bands{margin:10px 0 0;padding:0;list-style:none;border-top:1px dashed var(--line)}
+.bands li{display:grid;grid-template-columns:8.5em 1fr;gap:8px;padding:7px 6px;border-bottom:1px dashed var(--line);font-size:14px}
+.bands li.on{background:var(--hi);border-radius:8px;font-weight:700}
+.bands li .a{color:var(--muted)}
+.bands li.on .a{color:var(--ink)}
+.note{font-size:14px;margin-top:8px;white-space:pre-wrap}
+.empty{text-align:center;padding:48px 16px;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:18px}
+
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;
+  background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:14px 20px;font-weight:700;font-size:16px;box-shadow:0 6px 18px rgba(15,107,79,.35)}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:12px 18px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.danger{background:transparent;color:var(--warn);border:1.5px solid var(--warn)}
+
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.4);display:none}
+.sheet.open{display:block}
+.panel{position:absolute;inset:0;top:env(safe-area-inset-top,0px);background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+  border-radius:18px 18px 0 0;padding:0 16px calc(24px + env(safe-area-inset-bottom,0px))}
+@media (min-width:760px){.panel{max-width:620px;margin:0 auto;top:40px;bottom:40px;border-radius:18px}}
+.panel-h{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;padding:14px 0 10px;border-bottom:1px solid var(--line);z-index:2}
+.panel-h h2{margin:0;font-size:18px}
+fieldset{border:1px solid var(--line);border-radius:14px;padding:10px 12px 12px;margin:14px 0 0;background:var(--paper)}
+legend{font-weight:700;padding:0 6px;font-size:15px}
+.f{display:block;margin-top:8px}
+.f span{display:block;font-size:13px;color:var(--muted);margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 10px;font-size:16px;outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.toggle{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:4px}
+.toggle input{width:22px;height:22px;accent-color:var(--accent)}
+.band-row{display:grid;grid-template-columns:4.2em 4.2em 1fr 2.2em;gap:6px;align-items:end;margin-top:8px}
+.band-row input{width:100%;border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 8px;font-size:16px;outline:none}
+.band-row .x{border:0;background:transparent;color:var(--warn);font-size:22px;padding:6px 0}
+.band-head{display:grid;grid-template-columns:4.2em 4.2em 1fr 2.2em;gap:6px;font-size:12px;color:var(--muted);margin-top:6px}
+.actions{display:flex;gap:10px;justify-content:space-between;margin-top:18px}
+textarea.io{min-height:180px;font-size:13px;font-family:ui-monospace,Menlo,monospace}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="bar">
+    <div>
+      <div class="brand">Liều nhi</div>
+      <div class="status" id="status">Đang tải…</div>
+    </div>
+    <button class="iconbtn" id="menuBtn" aria-label="Sao lưu và khôi phục">Sao lưu</button>
+  </div>
+  <div class="patient">
+    <div class="field">
+      <label for="kg">Cân nặng</label>
+      <div class="kg"><input id="kg" inputmode="decimal" placeholder="—" autocomplete="off"><span>kg</span></div>
+    </div>
+    <div class="field">
+      <label for="ay">Tuổi</label>
+      <div class="age">
+        <input id="ay" inputmode="numeric" placeholder="0" autocomplete="off"><span>tuổi</span>
+        <input id="am" inputmode="numeric" placeholder="0" autocomplete="off" aria-label="tháng"><span>th</span>
+      </div>
+    </div>
+  </div>
+  <input id="q" class="search" type="search" placeholder="Tìm thuốc, nhóm, ghi chú…" autocomplete="off">
+</header>
+
+<main>
+  <div id="list"></div>
+  <p class="foot">Kết quả là liều tính toán tham khảo. Luôn đối chiếu chế phẩm và tình trạng bệnh nhân trước khi kê đơn.</p>
+</main>
+
+<button class="fab" id="addBtn">+ Thêm thuốc</button>
+
+<!-- Drug form -->
+<div class="sheet" id="formSheet" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+  <div class="panel">
+    <div class="panel-h">
+      <h2 id="formTitle">Thêm thuốc</h2>
+      <button class="iconbtn" data-close>Đóng</button>
+    </div>
+    <label class="f"><span>Tên thuốc *</span><input id="f_name" placeholder="VD: Amoxicillin"></label>
+    <div class="row2">
+      <label class="f"><span>Nhóm</span><input id="f_group" placeholder="VD: Kháng sinh"></label>
+      <label class="f"><span>Dạng bào chế</span><input id="f_form" placeholder="VD: Hỗn dịch uống"></label>
+    </div>
+    <div class="row2">
+      <label class="f"><span>Hàm lượng (mg)</span><input id="f_cmg" inputmode="decimal" placeholder="250"></label>
+      <label class="f"><span>trong (ml)</span><input id="f_cml" inputmode="decimal" placeholder="5"></label>
+    </div>
+    <p class="hint">Nhập hàm lượng để app tự đổi ra ml. Bỏ trống nếu là viên hoặc gói.</p>
+
+    <fieldset>
+      <legend>Theo cân nặng</legend>
+      <label class="toggle"><input type="checkbox" id="f_useW" checked> Tính liều theo kg</label>
+      <div id="wBox">
+        <label class="f"><span>Đơn vị liều</span>
+          <select id="f_basis">
+            <option value="day">mg/kg/ngày (chia theo số lần)</option>
+            <option value="dose">mg/kg/lần</option>
+          </select>
+        </label>
+        <div class="row3">
+          <label class="f"><span>Liều thấp</span><input id="f_low" inputmode="decimal"></label>
+          <label class="f"><span>Liều cao</span><input id="f_high" inputmode="decimal" placeholder="tuỳ chọn"></label>
+          <label class="f"><span>Số lần/ngày</span><input id="f_per" inputmode="numeric"></label>
+        </div>
+        <div class="row3">
+          <label class="f"><span>Tối đa mg/lần</span><input id="f_maxd" inputmode="decimal"></label>
+          <label class="f"><span>Tối đa mg/ngày</span><input id="f_maxday" inputmode="decimal"></label>
+          <label class="f"><span>Từ (tháng tuổi)</span><input id="f_minage" inputmode="numeric"></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Theo tuổi</legend>
+      <p class="hint" style="margin-top:0">Tuổi tính bằng tháng: 24 tháng = 2 tuổi. "Đến" là không bao gồm; để trống nếu không giới hạn.</p>
+      <div class="band-head"><span>Từ (th)</span><span>Đến (th)</span><span>Liều</span><span></span></div>
+      <div id="bands"></div>
+      <button class="btn ghost" id="addBand" style="margin-top:10px;padding:8px 14px">+ Thêm mốc tuổi</button>
+    </fieldset>
+
+    <label class="f" style="margin-top:14px"><span>Ghi chú</span><textarea id="f_note" rows="3" placeholder="Chỉ định, thời gian dùng, chống chỉ định…"></textarea></label>
+
+    <div class="actions">
+      <button class="btn danger" id="delBtn">Xoá thuốc</button>
+      <button class="btn" id="saveBtn">Lưu thuốc</button>
+    </div>
+  </div>
+</div>
+
+<!-- Backup -->
+<div class="sheet" id="ioSheet" role="dialog" aria-modal="true" aria-labelledby="ioTitle">
+  <div class="panel">
+    <div class="panel-h">
+      <h2 id="ioTitle">Sao lưu và khôi phục</h2>
+      <button class="iconbtn" data-close>Đóng</button>
+    </div>
+    <p class="hint" style="font-size:14px">Nên sao lưu định kỳ: sao chép toàn bộ danh sách thuốc để lưu vào app Ghi chú, hoặc dán dữ liệu đã sao lưu rồi bấm Nhập. Thuốc trùng mã sẽ được ghi đè.</p>
+    <label class="f"><span>Dữ liệu</span><textarea id="ioText" class="io" spellcheck="false"></textarea></label>
+    <div class="actions">
+      <button class="btn ghost" id="copyBtn">Sao chép</button>
+      <button class="btn" id="importBtn">Nhập dữ liệu</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const LS_LOCAL='lieunhi.local', LS_CACHE='lieunhi.cache', LS_INPUT='lieunhi.input';
+let drugs=[], mode='loading', colRef=null, canWrite=true, editingId=null;
+
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function num(v){if(v==null)return null;const s=String(v).trim().replace(',','.');if(!s)return null;const n=parseFloat(s);return isFinite(n)?n:null}
+function fmt(n,maxD){if(n==null||!isFinite(n))return '';if(maxD==null)maxD=n>=100?0:(n>=1?1:2);return n.toLocaleString('vi-VN',{maximumFractionDigits:maxD})}
+function fmtMl(n){return fmt(Math.round(n*10)/10, n<1?2:1)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase()}
+function range(a,b,f){return Math.abs(a-b)<0.05?f(a):f(a)+'–'+f(b)}
+function ageStr(m){return (m>=24&&m%12===0)?(m/12)+' tuổi':m+' tháng'}
+function bandLabel(b){
+  const f=b.from||0, t=b.to;
+  if(t==null) return f?'Từ '+ageStr(f):'Mọi tuổi';
+  if(!f) return 'Dưới '+ageStr(t);
+  return ageStr(f)+' – <'+ageStr(t);
+}
+let tt;
+function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2400)}
+
+/* ---------- patient inputs ---------- */
+const saved=lsGet(LS_INPUT,{});
+$('#kg').value=saved.kg||''; $('#ay').value=saved.ay||''; $('#am').value=saved.am||'';
+['kg','ay','am','q'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+  lsSet(LS_INPUT,{kg:$('#kg').value,ay:$('#ay').value,am:$('#am').value}); render();
+}));
+function ageMonths(){const y=num($('#ay').value),m=num($('#am').value);if(y==null&&m==null)return null;return (y||0)*12+(m||0)}
+
+/* ---------- calculation ---------- */
+function calc(d,kg){
+  const w=d.weight; if(!w||w.low==null||!kg) return null;
+  const n=w.perDay||1, div=w.basis==='day'?n:1;
+  let lo=w.low*kg/div, hi=(w.high!=null?w.high:w.low)*kg/div;
+  let cap=Infinity; if(w.maxDose) cap=w.maxDose; if(w.maxDay) cap=Math.min(cap,w.maxDay/n);
+  let capped=false; if(hi>cap){hi=cap;capped=true} if(lo>cap){lo=cap}
+  const c=(d.concMg&&d.concMl)?d.concMg/d.concMl:null;
+  return {lo,hi,n,capped,mlLo:c?lo/c:null,mlHi:c?hi/c:null};
+}
+function ruleText(w){
+  const hi=(w.high!=null&&w.high!==w.low)?'–'+fmt(w.high):'';
+  let s=fmt(w.low)+hi+' mg/kg/'+(w.basis==='day'?'ngày':'lần');
+  if(w.perDay) s+=(w.basis==='day'?', chia ':', ')+w.perDay+' lần/ngày';
+  const mx=[]; if(w.maxDose) mx.push(fmt(w.maxDose)+' mg/lần'); if(w.maxDay) mx.push(fmt(w.maxDay)+' mg/ngày');
+  if(mx.length) s+='. Tối đa '+mx.join(', ');
+  return s;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const kg=num($('#kg').value), age=ageMonths(), q=norm($('#q').value);
+  const list=drugs.filter(d=>!q||norm([d.name,d.group,d.form,d.note].join(' ')).includes(q))
+    .sort((a,b)=>String(a.name).localeCompare(String(b.name),'vi'));
+  const el=$('#list');
+  if(!drugs.length){
+    el.innerHTML='<div class="empty"><b>Chưa có thuốc nào</b>Thêm thuốc đầu tiên để bắt đầu tra liều.</div>';return;
+  }
+  if(!list.length){el.innerHTML='<div class="empty"><b>Không tìm thấy thuốc</b>Thử từ khoá khác hoặc thêm thuốc mới.</div>';return}
+  el.innerHTML=list.map(d=>{
+    const prep=[d.form, (d.concMg&&d.concMl)?fmt(d.concMg)+' mg/'+fmt(d.concMl)+' ml':'', d.group].filter(Boolean).join(' · ');
+    let h='<article class="card"><div class="card-h"><div><div class="name">'+esc(d.name)+'</div>'+(prep?'<div class="prep">'+esc(prep)+'</div>':'')+'</div>'+
+      (canWrite?'<button class="edit" data-edit="'+esc(d.id)+'">Sửa</button>':'')+'</div>';
+    const w=d.weight;
+    if(w&&w.low!=null){
+      if(w.minAge!=null&&age!=null&&age<w.minAge) h+='<div class="warn">Chưa khuyến cáo dưới '+esc(ageStr(w.minAge))+'</div>';
+      const r=calc(d,kg);
+      if(r){
+        h+='<div class="dose">';
+        if(r.mlLo!=null) h+='<div class="dose-big">'+range(r.mlLo,r.mlHi,fmtMl)+' <small>ml/lần</small></div><div class="dose-sub">'+range(r.lo,r.hi,x=>fmt(x))+' mg/lần × '+r.n+' lần/ngày</div>';
+        else h+='<div class="dose-big">'+range(r.lo,r.hi,x=>fmt(x))+' <small>mg/lần</small></div><div class="dose-sub">× '+r.n+' lần/ngày · '+range(r.lo*r.n,r.hi*r.n,x=>fmt(x))+' mg/ngày</div>';
+        if(r.capped) h+='<span class="cap">Đã giới hạn ở liều tối đa</span>';
+        h+='</div>';
+      }
+      h+='<div class="rule">'+esc(ruleText(w))+(w.minAge!=null?'. Từ '+esc(ageStr(w.minAge)):'')+'</div>';
+    }
+    if(d.bands&&d.bands.length){
+      h+='<ul class="bands">'+d.bands.map(b=>{
+        const on=age!=null&&age>=(b.from||0)&&(b.to==null||age<b.to);
+        return '<li class="'+(on?'on':'')+'"><span class="a">'+esc(bandLabel(b))+'</span><span>'+esc(b.dose)+'</span></li>';
+      }).join('')+'</ul>';
+    }
+    if(d.note) h+='<div class="note">'+esc(d.note)+'</div>';
+    return h+'</article>';
+  }).join('');
+}
+$('#list').addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(b)openForm(drugs.find(d=>d.id===b.dataset.edit))});
+
+function setStatus(){
+  $('#status').textContent = mode==='db' ? (canWrite?'Đồng bộ qua Claude':'Chỉ xem') : mode==='local' ? 'Offline · lưu trên máy này' : 'Đang tải…';
+  $('#addBtn').style.display=canWrite?'':'none';
+}
+
+/* ---------- storage ---------- */
+function newId(){return 'd'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+async function saveDrug(obj){
+  if(mode==='db'){
+    try{await colRef.doc(obj.id).set(strip(obj));return true}
+    catch(e){return handleErr(e)}
+  }
+  const i=drugs.findIndex(d=>d.id===obj.id); if(i>=0)drugs[i]=obj; else drugs.push(obj);
+  lsSet(LS_LOCAL,drugs); render(); return true;
+}
+async function removeDrug(id){
+  if(mode==='db'){try{await colRef.doc(id).delete();return true}catch(e){return handleErr(e)}}
+  drugs=drugs.filter(d=>d.id!==id); lsSet(LS_LOCAL,drugs); render(); return true;
+}
+function strip(o){const c=Object.assign({},o);delete c.id;return JSON.parse(JSON.stringify(c))}
+function handleErr(e){
+  const c=e&&e.code;
+  if(c==='invalid_argument'){canWrite=false;setStatus();render();toast('Bạn chỉ có quyền xem danh sách này')}
+  else if(c==='quota_exceeded') toast('Đã đầy bộ nhớ. Xoá bớt thuốc rồi thử lại');
+  else toast('Chưa lưu được. Kiểm tra kết nối rồi thử lại');
+  return false;
+}
+
+/* ---------- form ---------- */
+function bandRow(b){
+  const r=document.createElement('div');r.className='band-row';
+  r.innerHTML='<input inputmode="numeric" class="bf" aria-label="Từ tháng"><input inputmode="numeric" class="bt" aria-label="Đến tháng"><input class="bd" placeholder="VD: 2,5 ml × 1 lần/ngày" aria-label="Liều"><button class="x" aria-label="Xoá mốc">×</button>';
+  r.querySelector('.bf').value=b&&b.from!=null?b.from:'';
+  r.querySelector('.bt').value=b&&b.to!=null?b.to:'';
+  r.querySelector('.bd').value=b&&b.dose||'';
+  r.querySelector('.x').onclick=()=>r.remove();
+  $('#bands').appendChild(r);
+}
+$('#addBand').onclick=()=>bandRow();
+$('#f_useW').onchange=()=>{$('#wBox').style.display=$('#f_useW').checked?'':'none'};
+function val(id,v){$('#'+id).value=v==null?'':String(v).replace('.',',')}
+function openForm(d){
+  editingId=d?d.id:null;
+  $('#formTitle').textContent=d?'Sửa thuốc':'Thêm thuốc';
+  $('#delBtn').style.visibility=d?'visible':'hidden';
+  $('#f_name').value=d?d.name:''; $('#f_group').value=d&&d.group||''; $('#f_form').value=d&&d.form||'';
+  val('f_cmg',d&&d.concMg); val('f_cml',d&&d.concMl); $('#f_note').value=d&&d.note||'';
+  const w=d?d.weight:null;
+  $('#f_useW').checked=d?!!(w&&w.low!=null):true; $('#f_useW').onchange();
+  $('#f_basis').value=w&&w.basis||'day';
+  val('f_low',w&&w.low); val('f_high',w&&w.high); val('f_per',w&&w.perDay);
+  val('f_maxd',w&&w.maxDose); val('f_maxday',w&&w.maxDay); val('f_minage',w&&w.minAge);
+  $('#bands').innerHTML=''; (d&&d.bands&&d.bands.length?d.bands:[]).forEach(bandRow);
+  if(!d) bandRow();
+  $('#formSheet').classList.add('open'); $('#formSheet .panel').scrollTop=0;
+  if(!d) setTimeout(()=>$('#f_name').focus(),50);
+}
+$('#addBtn').onclick=()=>openForm(null);
+$('#saveBtn').onclick=async()=>{
+  const name=$('#f_name').value.trim();
+  if(!name){toast('Nhập tên thuốc');$('#f_name').focus();return}
+  let weight=null;
+  if($('#f_useW').checked){
+    const low=num($('#f_low').value), per=num($('#f_per').value);
+    if(low==null||!per){toast('Nhập liều thấp và số lần/ngày');return}
+    weight={basis:$('#f_basis').value,low,high:num($('#f_high').value),perDay:Math.round(per),
+      maxDose:num($('#f_maxd').value),maxDay:num($('#f_maxday').value),minAge:num($('#f_minage').value)};
+  }
+  const bands=[...document.querySelectorAll('#bands .band-row')].map(r=>({
+    from:num(r.querySelector('.bf').value),to:num(r.querySelector('.bt').value),dose:r.querySelector('.bd').value.trim()
+  })).filter(b=>b.dose).sort((a,b)=>(a.from||0)-(b.from||0));
+  if(!weight&&!bands.length){toast('Thêm liều theo cân nặng hoặc theo tuổi');return}
+  const obj={id:editingId||newId(),name,group:$('#f_group').value.trim(),form:$('#f_form').value.trim(),
+    concMg:num($('#f_cmg').value),concMl:num($('#f_cml').value),weight,bands,note:$('#f_note').value.trim(),updated:Date.now()};
+  $('#saveBtn').disabled=true;
+  const ok=await saveDrug(obj);
+  $('#saveBtn').disabled=false;
+  if(ok){closeSheets();toast(editingId?'Đã lưu thay đổi':'Đã thêm '+name)}
+};
+$('#delBtn').onclick=async()=>{
+  const d=drugs.find(x=>x.id===editingId); if(!d)return;
+  if(!confirm('Xoá "'+d.name+'" khỏi danh sách?'))return;
+  if(await removeDrug(d.id)){closeSheets();toast('Đã xoá '+d.name)}
+};
+
+/* ---------- backup ---------- */
+$('#menuBtn').onclick=()=>{$('#ioText').value=JSON.stringify(drugs,null,1);$('#ioSheet').classList.add('open')};
+$('#copyBtn').onclick=async()=>{
+  const t=$('#ioText');
+  try{await navigator.clipboard.writeText(t.value);toast('Đã sao chép')}
+  catch(e){t.focus();t.select();try{document.execCommand('copy');toast('Đã sao chép')}catch(_){toast('Giữ và chọn Sao chép để lưu')}}
+};
+$('#importBtn').onclick=async()=>{
+  let arr; try{arr=JSON.parse($('#ioText').value)}catch(e){toast('Dữ liệu không đúng định dạng');return}
+  if(!Array.isArray(arr)){toast('Dữ liệu không đúng định dạng');return}
+  arr=arr.filter(x=>x&&x.name);
+  if(!arr.length){toast('Không có thuốc nào để nhập');return}
+  if(!confirm('Nhập '+arr.length+' thuốc?'))return;
+  let n=0;
+  for(const x of arr){const o=Object.assign({},x,{id:x.id||newId()});if(await saveDrug(o))n++;else break}
+  toast('Đã nhập '+n+' thuốc'); closeSheets();
+};
+
+function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'))}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)closeSheets()}));
+
+/* ---------- startup (offline) ---------- */
+const SEED=[{"id": "paracetamol", "name": "Paracetamol", "group": "Hạ sốt, giảm đau", "form": "Siro", "concMg": 160, "concMl": 5, "weight": {"basis": "dose", "low": 10, "high": 15, "perDay": 4, "maxDose": 1000, "maxDay": 4000, "minAge": null}, "bands": [], "note": "Cách 4–6 giờ, không quá 5 lần/24 giờ, tối đa 75 mg/kg/ngày. Sửa hàm lượng theo chế phẩm đang dùng."}, {"id": "ibuprofen", "name": "Ibuprofen", "group": "Hạ sốt, giảm đau", "form": "Hỗn dịch", "concMg": 100, "concMl": 5, "weight": {"basis": "dose", "low": 5, "high": 10, "perDay": 3, "maxDose": 400, "maxDay": 1200, "minAge": 6}, "bands": [], "note": "Cách 6–8 giờ, tối đa 40 mg/kg/ngày. Tránh khi mất nước, nghi sốt xuất huyết."}, {"id": "amoxicillin", "name": "Amoxicillin (liều cao)", "group": "Kháng sinh", "form": "Hỗn dịch", "concMg": 250, "concMl": 5, "weight": {"basis": "day", "low": 80, "high": 90, "perDay": 2, "maxDose": 2000, "maxDay": 4000, "minAge": null}, "bands": [], "note": "Viêm tai giữa cấp, viêm xoang cấp do vi khuẩn. Liều thường: 40–50 mg/kg/ngày."}, {"id": "cefdinir", "name": "Cefdinir", "group": "Kháng sinh", "form": "Hỗn dịch", "concMg": 125, "concMl": 5, "weight": {"basis": "day", "low": 14, "high": null, "perDay": 2, "maxDose": 300, "maxDay": 600, "minAge": 6}, "bands": [], "note": "Có thể dùng 14 mg/kg × 1 lần/ngày."}, {"id": "azithromycin", "name": "Azithromycin", "group": "Kháng sinh", "form": "Hỗn dịch", "concMg": 200, "concMl": 5, "weight": {"basis": "dose", "low": 10, "high": null, "perDay": 1, "maxDose": 500, "maxDay": 500, "minAge": 6}, "bands": [], "note": "Ngày 1: 10 mg/kg (tối đa 500 mg); ngày 2–5: 5 mg/kg/ngày (tối đa 250 mg). Liều hiển thị là ngày 1."}, {"id": "cetirizine", "name": "Cetirizine", "group": "Kháng histamin", "form": "Siro", "concMg": 1, "concMl": 1, "weight": null, "bands": [{"from": 6, "to": 24, "dose": "2,5 mg (2,5 ml) × 1 lần/ngày"}, {"from": 24, "to": 72, "dose": "2,5–5 mg/ngày, 1 lần hoặc chia 2"}, {"from": 72, "to": null, "dose": "5–10 mg × 1 lần/ngày"}], "note": "Ví dụ thuốc tra theo tuổi."}];
+mode='local';
+drugs=lsGet(LS_LOCAL,null);
+if(!drugs){drugs=SEED;lsSet(LS_LOCAL,drugs)}
+setStatus(); render();
+try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist() }catch(e){}
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})) }
+})();
+</script>
+</body>
+</html>
